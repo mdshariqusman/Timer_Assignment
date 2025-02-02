@@ -3,6 +3,7 @@ export class TimerAudio {
   private audioContext: AudioContext | null = null;
   private oscillator: OscillatorNode | null = null;
   private gainNode: GainNode | null = null;
+  private playing: boolean = false; // Track if the sound is playing
 
   private constructor() {}
 
@@ -24,9 +25,13 @@ export class TimerAudio {
   }
 
   async play(): Promise<void> {
+    if (this.playing) {
+      return; // Prevent multiple instances if the sound is already playing
+    }
+
     try {
       await this.initializeAudioContext();
-      
+
       if (!this.audioContext) {
         throw new Error('AudioContext not initialized');
       }
@@ -34,27 +39,25 @@ export class TimerAudio {
       // Create and configure oscillator
       this.oscillator = this.audioContext.createOscillator();
       this.gainNode = this.audioContext.createGain();
-      
+
       this.oscillator.type = 'sine';
       this.oscillator.frequency.setValueAtTime(880, this.audioContext.currentTime); // A5 note
-      
+
       // Configure gain (volume) envelope
       this.gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
       this.gainNode.gain.linearRampToValueAtTime(0.5, this.audioContext.currentTime + 0.01);
-      this.gainNode.gain.linearRampToValueAtTime(0, this.audioContext.currentTime + 0.5);
-      
+
       // Connect nodes
       this.oscillator.connect(this.gainNode);
       this.gainNode.connect(this.audioContext.destination);
-      
-      // Start and stop the oscillator
-      this.oscillator.start(this.audioContext.currentTime);
-      this.oscillator.stop(this.audioContext.currentTime + 0.5);
-      
-      // Cleanup after sound ends
-      setTimeout(() => {
-        this.cleanup();
-      }, 500);
+
+      // Set the oscillator to loop indefinitely
+      this.oscillator.loop = true;
+
+      // Start the oscillator
+      this.oscillator.start();
+
+      this.playing = true; // Mark the audio as playing
 
     } catch (error) {
       console.error('Failed to play audio:', error);
@@ -62,6 +65,7 @@ export class TimerAudio {
   }
 
   stop(): void {
+    this.playing = false; // Mark the audio as stopped
     this.cleanup();
   }
 
