@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Plus, Clock } from 'lucide-react';
 import { TimerList } from './components/TimerList';
-import { AddTimerModal } from './components/AddTimerModal';
 import { Toaster } from 'sonner';
 import Button from './components/Button';
+import { AddEditTimerModal } from './components/EditTimerModal';
 
 function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -23,7 +23,17 @@ function Home() {
             icon={<Plus className="w-5 h-5" />} />
         </div>
         <TimerList />
-        <AddTimerModal
+        <AddEditTimerModal
+          timer={{
+            id: '',
+            title: '',
+            description: '',
+            duration: 0,
+            remainingTime: 0,
+            isRunning: false,
+            createdAt: 0,
+          }}
+          type="add"
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
         />
