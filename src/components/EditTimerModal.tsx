@@ -225,7 +225,6 @@ export const AddEditTimerModal: React.FC<EditTimerModalProps> = ({
             />
             <Button
               type="submit"
-              disabled={!isTitleValid || !isTimeValid}
               label={type === 'add' ? "Add Timer" : "Save Changes"}
               className={`px-4 py-2 text-sm font-medium text-white rounded-md transition-colors ${isTitleValid && isTimeValid
                 ? 'bg-blue-600 hover:bg-blue-700'

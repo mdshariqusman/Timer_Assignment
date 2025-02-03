@@ -10,7 +10,7 @@ export interface TimerFormData {
 
 export const validateTimerForm = (data: TimerFormData): boolean => {
   const { title, hours, minutes, seconds } = data;
-  
+   toast.dismiss(); // added this dismiss function to prevent the duplicate toast
   if (!title.trim()) {
     toast.error('Title is required');
     return false;
