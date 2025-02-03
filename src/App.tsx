@@ -6,9 +6,9 @@ import { store } from './store/useTimerStore.ts';
 import './index.css';
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
+  // <StrictMode>
     <Provider store={store}>
       <Home />
     </Provider>
-  </StrictMode>
+  // </StrictMode>
 );

@@ -16,7 +16,7 @@ export const AddEditTimerModal: React.FC<EditTimerModalProps> = ({
   isOpen,
   onClose,
   timer,
-  type
+  type,
 }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -32,6 +32,7 @@ export const AddEditTimerModal: React.FC<EditTimerModalProps> = ({
 
   const { editTimer } = useTimerStore();
   const { addTimer } = useTimerStore();
+  const { timers } = useTimerStore();
 
   useEffect(() => {
     if (isOpen && type != 'add') {
@@ -48,6 +49,13 @@ export const AddEditTimerModal: React.FC<EditTimerModalProps> = ({
       });
     }
   }, [isOpen, timer]);
+
+  // Adding the updated timer list data into the local storage
+  useEffect(() => {
+    if (window != undefined && timers.length > 0) {
+        localStorage.setItem("timer_data", JSON.stringify(timers))
+    }
+  }, [timers]);
 
   if (!isOpen) return null;
 
@@ -75,7 +83,7 @@ export const AddEditTimerModal: React.FC<EditTimerModalProps> = ({
         duration: totalSeconds,
       });
     }
-    if(type === 'add') {
+    if (type === 'add') {
       setTitle('');
       setDescription('');
       setHours(0);
@@ -92,7 +100,7 @@ export const AddEditTimerModal: React.FC<EditTimerModalProps> = ({
   };
 
   const handleClose = () => {
-    if(type === 'add') {
+    if (type === 'add') {
       setTitle('');
       setDescription('');
       setHours(0);

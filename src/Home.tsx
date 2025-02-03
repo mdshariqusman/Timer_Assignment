@@ -1,13 +1,25 @@
-import { useState,useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Plus, Clock } from 'lucide-react';
 import { TimerList } from './components/TimerList';
 import { Toaster } from 'sonner';
 import Button from './components/Button';
 import { AddEditTimerModal } from './components/EditTimerModal';
+import { useTimerStore } from './store/useTimerStore';
 
+interface TimerData {
+  id: string;
+  title: string;
+  description: string;
+  duration: number;
+  remainingTime: number;
+  isRunning: boolean;
+  createdAt: number;
+}
 function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [toastPosition, setToastPosition] = useState<'top-right' | 'bottom-center'>('top-right')
+  const [toastPosition, setToastPosition] = useState<'top-right' | 'bottom-center'>('top-right');
+  const { addTimer } = useTimerStore();
+
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth <= 768) {
@@ -18,10 +30,27 @@ function Home() {
     };
 
     handleResize();
-    window.addEventListener('resize', handleResize); 
+    window.addEventListener('resize', handleResize);
 
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  useEffect(() => {
+    if (window != undefined) {
+      const savedList: string | null = localStorage.getItem("timer_data");
+      const parsedList: TimerData[] = JSON.parse(savedList);
+      parsedList?.map((item) => {
+        addTimer({
+          title: item?.title.trim(),
+          description: item?.description.trim(),
+          duration: item?.duration,
+          remainingTime: item?.remainingTime,
+          isRunning: item?.isRunning,
+        });
+      })
+    }
+  }, []);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <Toaster position={toastPosition} />
